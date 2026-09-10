@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 signal attack_landed(enemy)
+signal damaged
 
 const SPEED := 250.0
 const ACCEL := 1500.0
@@ -13,6 +14,7 @@ var facing := 1
 var attacking := false
 var attack_time := 0.0
 var attack_hit := false
+var hurt_time := 0.0
 
 func _ready() -> void:
 	var collider := CollisionShape2D.new()
@@ -26,15 +28,19 @@ func _ready() -> void:
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
+	if hurt_time > 0.0:
+		hurt_time -= delta
 	var axis := Input.get_axis("move_left", "move_right")
 	if axis != 0:
 		velocity.x = move_toward(velocity.x, axis * SPEED, ACCEL * delta)
 		facing = 1 if axis > 0 else -1
 	else:
 		velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
-	if not is_on_floor(): velocity.y += GRAVITY * delta
-	if Input.is_action_just_pressed("jump") and is_on_floor(): velocity.y = JUMP_FORCE
-	if Input.is_action_just_pressed("attack") and not attacking:
+	if not is_on_floor():
+		velocity.y += GRAVITY * delta
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = JUMP_FORCE
+	if Input.is_action_just_pressed("attack") and not attacking and hurt_time <= 0.0:
 		attacking = true
 		attack_time = 0.26
 		attack_hit = false
@@ -43,16 +49,32 @@ func _physics_process(delta: float) -> void:
 		if attack_time < 0.14 and not attack_hit:
 			attack_hit = true
 			for node in get_tree().get_nodes_in_group("enemies"):
-				if node.global_position.distance_to(global_position + Vector2(facing * 46, -8)) < 58:
+				if node.global_position.distance_to(global_position + Vector2(facing * 46, -8)) < 62:
 					attack_landed.emit(node)
-		if attack_time <= 0: attacking = false
-		queue_redraw()
+		if attack_time <= 0:
+			attacking = false
 	move_and_slide()
 	global_position.x = clamp(global_position.x, 30.0, 1110.0)
+	if global_position.y > 700.0:
+		global_position = Vector2(170, 450)
+		velocity = Vector2.ZERO
+	queue_redraw()
+
+func take_damage(amount: int) -> void:
+	if hurt_time > 0.0:
+		return
+	hp = max(0, hp - amount)
+	hurt_time = 0.75
+	damaged.emit()
+	if hp <= 0:
+		hp = max_hp
+		global_position = Vector2(170, 450)
+		velocity = Vector2.ZERO
 
 func _draw() -> void:
+	var body_color := Color("f2b078") if hurt_time <= 0.0 else Color("fff0b1")
 	# cloak/body silhouette
-	draw_circle(Vector2(0, -30), 15, Color("e5a071"))
+	draw_circle(Vector2(0, -30), 15, body_color)
 	draw_colored_polygon(PackedVector2Array([Vector2(-18, -16), Vector2(19, -16), Vector2(25, 25), Vector2(-25, 25)]), Color("48356e"))
 	draw_colored_polygon(PackedVector2Array([Vector2(-18, 8), Vector2(-35, 27), Vector2(-19, 25), Vector2(0, 9), Vector2(19, 25), Vector2(34, 27), Vector2(18, 8)]), Color("2a234d"))
 	draw_circle(Vector2(facing * 6, -33), 3, Color("ffd777"))
