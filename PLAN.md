@@ -2,7 +2,7 @@
 
 ## Direction
 
-An original Godot 4 2D action-platformer prototype inspired by the qualities of Soulflame Game Dev: atmospheric pixel-art presentation, character-driven exploration, responsive movement, and readable melee combat. It does not copy Soulflame's characters, story, or assets.
+An entirely original Godot 4 2D action-platformer prototype. The title, characters, world, story direction, enemies, locations, art language, and gameplay content are independently created for this project and are not copied from another game or creator. The project focuses on atmospheric pixel-art presentation, character-driven exploration, responsive movement, and readable melee combat.
 
 ## Risk Tasks
 
