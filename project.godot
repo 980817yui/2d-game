@@ -1,0 +1,22 @@
+[application]
+config/name="Ashenlight: Echoes Below"
+run/main_scene="res://main.tscn"
+
+[display]
+window/size/viewport_width=1152
+window/size/viewport_height=648
+window/size/window_width_override=1152
+window/size/window_height_override=648
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.035, 0.027, 0.075, 1)
+
+[input]
+move_left={"deadzone":0.5,"events":[Object(InputEventKey,"physical_keycode":65), Object(InputEventKey,"physical_keycode":4194311)]}
+move_right={"deadzone":0.5,"events":[Object(InputEventKey,"physical_keycode":68), Object(InputEventKey,"physical_keycode":4194313)]}
+jump={"deadzone":0.5,"events":[Object(InputEventKey,"physical_keycode":32)]}
+attack={"deadzone":0.5,"events":[Object(InputEventKey,"physical_keycode":74), Object(InputEventMouseButton,"button_index":1)]}
+interact={"deadzone":0.5,"events":[Object(InputEventKey,"physical_keycode":69)]}
